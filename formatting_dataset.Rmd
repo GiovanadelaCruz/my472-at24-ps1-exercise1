@@ -1,0 +1,40 @@
+---
+title: "Transforming data set"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(stringr)
+```
+
+
+### Function to transform and clean dataset obtained from World Bank Open Data
+
+The following function transforms wide-format data sets into long-format data sets obtained from [World Bank Open Data](https://data.worldbank.org/), and it also cleans the data sets to prepare them for analysis.
+
+
+```{r function}
+transforming_data_wb <- function(data) {
+  dataset_wb <- read.csv(data) # Importing data
+  dataset_wb <- dataset_wb %>%  # Reshaping from wide-format to long-format
+  pivot_longer(
+    cols = colnames(dataset_wb)[5:ncol(dataset_wb)],
+    names_to = "year", 
+    values_to = "value"
+  )
+  names(dataset_wb)[c(1, 2, 3 ,4)] <- c("country", "country_code", "series", "series_code") # Formatting the variables' names
+  dataset_wb$year <- str_replace_all(dataset_wb$year, ".*YR|\\.$", "") # Cleaning the "year" column
+  dataset_wb$year <- as.numeric(dataset_wb$year) # Formatting the column to numeric
+  dataset_wb$value <- suppressWarnings(as.numeric(dataset_wb$value))  # Formatting the column to numeric
+  dataset_wb <- dataset_wb %>% drop_na(value) # Dropping NA observations
+  return(dataset_wb) # Returning the clean dataset
+}
+
+path <- "https://raw.githubusercontent.com/GiovanadelaCruz/my472-at24-ps1-exercise1/refs/heads/main/" # Main path
+transforming_data_wb(paste0(path, "world_bank_data.csv")) # Calling the function "transforming_data_wb"
+
+```
+
