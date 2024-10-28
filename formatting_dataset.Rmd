@@ -19,8 +19,8 @@ Last update: The function include dropping unnecessary columns and transforming 
 
 
 ```{r function}
-transforming_data_wb <- function(data) {
-  dataset_wb <- read.csv(data) # Importing data
+transforming_data_wb <- function(data_new) {
+  dataset_wb <- read.csv(data_new) # Importing data
   dataset_wb <- dataset_wb %>%  # Reshaping from wide-format to long-format
   pivot_longer(
     cols = colnames(dataset_wb)[5:ncol(dataset_wb)],
