@@ -15,6 +15,8 @@ library(stringr)
 
 The following function transforms wide-format data sets into long-format data sets obtained from [World Bank Open Data](https://data.worldbank.org/), and it also cleans the data sets to prepare them for analysis.
 
+Last update: The function include dropping unnecessary columns and transforming "value" column (rounding to one decimal place).
+
 
 ```{r function}
 transforming_data_wb <- function(data) {
@@ -30,6 +32,9 @@ transforming_data_wb <- function(data) {
   dataset_wb$year <- as.numeric(dataset_wb$year) # Formatting the column to numeric
   dataset_wb$value <- suppressWarnings(as.numeric(dataset_wb$value))  # Formatting the column to numeric
   dataset_wb <- dataset_wb %>% drop_na(value) # Dropping NA observations
+  dataset_wb <- dataset_wb[, !names(dataset_wb) %in% c("country_code", "series_code")] # Dropping unnecessary columns
+  dataset_wb$value <- round(dataset_wb$value, 1) # Rounding to one decimal place
+  
   return(dataset_wb) # Returning the clean dataset
 }
 

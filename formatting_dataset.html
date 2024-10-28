@@ -359,6 +359,8 @@ Open Data</h3>
 <p>The following function transforms wide-format data sets into
 long-format data sets obtained from <a href="https://data.worldbank.org/">World Bank Open Data</a>, and it also
 cleans the data sets to prepare them for analysis.</p>
+<p>Last update: The function include dropping unnecessary columns and
+transforming “value” column (rounding to one decimal place).</p>
 <pre class="r"><code>transforming_data_wb &lt;- function(data) {
   dataset_wb &lt;- read.csv(data) # Importing data
   dataset_wb &lt;- dataset_wb %&gt;%  # Reshaping from wide-format to long-format
@@ -372,24 +374,27 @@ cleans the data sets to prepare them for analysis.</p>
   dataset_wb$year &lt;- as.numeric(dataset_wb$year) # Formatting the column to numeric
   dataset_wb$value &lt;- suppressWarnings(as.numeric(dataset_wb$value))  # Formatting the column to numeric
   dataset_wb &lt;- dataset_wb %&gt;% drop_na(value) # Dropping NA observations
+  dataset_wb &lt;- dataset_wb[, !names(dataset_wb) %in% c(&quot;country_code&quot;, &quot;series_code&quot;)] # Dropping unnecessary columns
+  dataset_wb$value &lt;- round(dataset_wb$value, 1) # Rounding to one decimal place
+  
   return(dataset_wb) # Returning the clean dataset
 }
 
 path &lt;- &quot;https://raw.githubusercontent.com/GiovanadelaCruz/my472-at24-ps1-exercise1/refs/heads/main/&quot; # Main path
 transforming_data_wb(paste0(path, &quot;world_bank_data.csv&quot;)) # Calling the function &quot;transforming_data_wb&quot;</code></pre>
-<pre><code>## # A tibble: 10,070 × 6
-##    country     country_code series                       series_code  year value
-##    &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;                        &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;
-##  1 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2000  318.
-##  2 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2001  286.
-##  3 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2002  344.
-##  4 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2003  347.
-##  5 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2004  339.
-##  6 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2005  364.
-##  7 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2006  367.
-##  8 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2007  411.
-##  9 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2008  419.
-## 10 Afghanistan AFG          GDP per capita (constant 20… NY.GDP.PCA…  2009  490.
+<pre><code>## # A tibble: 10,070 × 4
+##    country     series                              year value
+##    &lt;chr&gt;       &lt;chr&gt;                              &lt;dbl&gt; &lt;dbl&gt;
+##  1 Afghanistan GDP per capita (constant 2015 US$)  2000  318.
+##  2 Afghanistan GDP per capita (constant 2015 US$)  2001  286.
+##  3 Afghanistan GDP per capita (constant 2015 US$)  2002  344.
+##  4 Afghanistan GDP per capita (constant 2015 US$)  2003  347.
+##  5 Afghanistan GDP per capita (constant 2015 US$)  2004  339.
+##  6 Afghanistan GDP per capita (constant 2015 US$)  2005  364.
+##  7 Afghanistan GDP per capita (constant 2015 US$)  2006  368.
+##  8 Afghanistan GDP per capita (constant 2015 US$)  2007  411.
+##  9 Afghanistan GDP per capita (constant 2015 US$)  2008  418.
+## 10 Afghanistan GDP per capita (constant 2015 US$)  2009  490.
 ## # ℹ 10,060 more rows</code></pre>
 </div>
 
